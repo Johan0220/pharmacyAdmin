@@ -4,18 +4,21 @@ import { deleteProduct, updateCapsule } from "@/services/apiRequest";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
 import { UpdateCapsule } from "../types/typeProduct";
+import createAxios from "@/services/createAxios";
+import { loginSuccess } from "@/redux/features/auth/authSlice";
 const Capsule = (props:any) => { 
       const product = props.product
+      const token: any = useAppSelector((state)=>state.auth.login.currentToken);
+      const navigate = useRouter()
+      const dispatch = useAppDispatch();
       let file;
       if (typeof window !== 'undefined') {
             file = new File(['fileBits'], 'fileName', { type: 'text/plain' });
       }
+      let axiosJWT = createAxios(token,dispatch,navigate,loginSuccess)
       const [delprod,setDelprod] = useState(false)
       const [editMode, setEditMode] = useState(false);
       const [preview, setPreview] = useState('');
-      const navigate = useRouter()
-      const dispatch = useAppDispatch();
-      const token: any = useAppSelector((state)=>state.auth.login.currentToken);
       const [updateProduct, setUpdateProduct] = useState<UpdateCapsule>(
             {
             id: product.id, 
@@ -29,7 +32,7 @@ const Capsule = (props:any) => {
             }
       )
       const handleDelete = () => {
-            deleteProduct(product.id,token?.accessToken,dispatch, navigate)
+            deleteProduct(product.id,token?.accessToken,dispatch, navigate, axiosJWT)
       }
       const handleChangeUpdate = (event: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
             let value: number | string | File  = event.target.value;
@@ -59,7 +62,7 @@ const Capsule = (props:any) => {
             }
           };
       const handleUpdate = () => {
-            updateCapsule(updateProduct,token?.accessToken,dispatch)
+            updateCapsule(updateProduct,token?.accessToken,dispatch, axiosJWT)
       }
       return(
             <>       
@@ -97,7 +100,7 @@ const Capsule = (props:any) => {
                                                 </li>
                                                 <li className="pb-5">
                                                       <div className="font-semibold">Category:</div>
-                                                      <span className="text-sm text-gray-500 dark:text-gray-400">{updateProduct.cateGet?.cateName}</span>                  
+                                                      <span className="text-sm text-gray-500 dark:text-gray-400">{product.cateGet?.cateName}</span>                  
                                                 </li>
                                                 <li className="pb-5">
                                                       <label htmlFor="title" className="font-semibold">Title:</label>
@@ -129,7 +132,7 @@ const Capsule = (props:any) => {
                                                 {preview?(
                                                       <Image className="my-16" src={preview} height="300" width="200" alt="image"></Image>
                                                 ):(
-                                                      <Image className="my-16" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" height="300" width="200" alt="image"></Image>
+                                                      <Image className="my-16" src={product.thumbnail} height="300" width="200" alt="image"></Image>
                                                 )
                                                 } 
                                                 <input onChange={(event)=>{handleFileChange(event);handleChangeUpdate(event)}} className="block auto text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" id="file" type="file"/>
@@ -176,7 +179,7 @@ const Capsule = (props:any) => {
                                                 </ul>
                                     </div>
                                     <div className="grid justify-items-center items-center">
-                                          <Image src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" height="300" width="200" alt="Anh"  ></Image>
+                                          <Image src={product.thumbnail} height="300" width="200" alt="Anh"  ></Image>
                                     </div>
                               </div>
                         </>

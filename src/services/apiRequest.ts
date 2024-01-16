@@ -20,7 +20,6 @@ import { totalProduct,
     loadProductDetailFailed,
     loadPageProductSuccess,
     } from "../redux/features/product/productSlice";
-
 import { loadCategoryStart,loadCategorySuccess,loadCategoryFailed } from "@/redux/features/dashboard/dashboardSlice";
 import { totalResume,loadResumeStart,loadResumeSuccess,loadResumeFailed,loadPageResumeSuccess} from "../redux/features/resume/resumeSlice";
 import { getUserStart, getUserSuccess,getUserFailed,totalUser, loadPageUserSuccess } from "../redux/features/user/userSlice";
@@ -29,11 +28,11 @@ import url from "./url";
 import { Dispatch } from "@reduxjs/toolkit";
 import { AppRouterInstance} from "next/dist/shared/lib/app-router-context.shared-runtime";
 import { AxiosInstance } from "axios";
-import { NewCapsule,NewLiquid,NewTablet,UpdateCapsule } from "@/components/types/typeProduct";
+import { NewCapsule,NewLiquid,NewTablet,UpdateCapsule, UpdateLiquid, UpdateTablet } from "@/components/types/typeProduct";
 
 
 //Auth
-export const handleLogin = (async (data: User, dispatch: Dispatch, navigate: AppRouterInstance) => {
+export const handleLogin = (async (data: User, dispatch: Dispatch, navigate: AppRouterInstance, axiosJWT: AxiosInstance) => {
     dispatch(loginStart())
     const formData = new FormData();
     Object.keys(data).forEach((key) => {
@@ -43,7 +42,7 @@ export const handleLogin = (async (data: User, dispatch: Dispatch, navigate: App
     }
     });
     try {
-        const rs = await api.post(`${url.BASE_URL}${url.USER.LOGIN}`, formData, {
+        const rs = await axiosJWT.post(`${url.BASE_URL}${url.USER.LOGIN}`, formData, {
             headers: { 'Content-Type': 'application/json'},
         });
         const auth = {
@@ -103,14 +102,14 @@ export const profileRequest = async (dispatch: Dispatch, tokenStr: string, axios
 }
 
 //Product
-export const addCapsule = async (data: NewCapsule, dispatch: Dispatch, tokenStr: string) => {
+export const addCapsule = async (data: NewCapsule, dispatch: Dispatch, tokenStr: string, axiosJWT: AxiosInstance) => {
     dispatch(addProductStart())
     const formData = new FormData();
     for (let key in data) {
         formData.append(key, data[key]);
     }
     try {
-        const rs = await api.post(`${url.BASE_URL}${url.PRODUCT.ADD.CAPSULE}`, formData, {
+        const rs = await axiosJWT.post(`${url.BASE_URL}${url.PRODUCT.ADD.CAPSULE}`, formData, {
             headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${tokenStr}`},
       });
     dispatch(addProductSuccess(rs.data))
@@ -119,14 +118,14 @@ export const addCapsule = async (data: NewCapsule, dispatch: Dispatch, tokenStr:
     }
 };
 
-export const addLiquid = async (data: NewLiquid, dispatch: Dispatch, tokenStr: string) => {
+export const addLiquid = async (data: NewLiquid, dispatch: Dispatch, tokenStr: string, axiosJWT: AxiosInstance) => {
     dispatch(addProductStart())
     const formData = new FormData();
     for (let key in data) {
         formData.append(key, data[key]);
     }
     try {
-        const rs = await api.post(`${url.BASE_URL}${url.PRODUCT.ADD.LIQUID}`, formData, {
+        const rs = await axiosJWT.post(`${url.BASE_URL}${url.PRODUCT.ADD.LIQUID}`, formData, {
             headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${tokenStr}`},
       });
     dispatch(addProductSuccess(rs.data))
@@ -135,14 +134,14 @@ export const addLiquid = async (data: NewLiquid, dispatch: Dispatch, tokenStr: s
     }
 };
 
-export const addTablet = async (data: NewTablet, dispatch: Dispatch, tokenStr: string) => {
+export const addTablet = async (data: NewTablet, dispatch: Dispatch, tokenStr: string, axiosJWT: AxiosInstance) => {
     dispatch(addProductStart())
     const formData = new FormData();
     for (let key in data) {
         formData.append(key, data[key]);
     }
     try {
-        const rs = await api.post(`${url.BASE_URL}${url.PRODUCT.ADD.LIQUID}`, formData, {
+        const rs = await axiosJWT.post(`${url.BASE_URL}${url.PRODUCT.ADD.LIQUID}`, formData, {
             headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${tokenStr}`},
       });
     dispatch(addProductSuccess(rs.data))
@@ -151,10 +150,10 @@ export const addTablet = async (data: NewTablet, dispatch: Dispatch, tokenStr: s
     }
 };
 
-export const deleteProduct = async (id: number, tokenStr:string, dispatch:Dispatch, navigate: AppRouterInstance) => {
+export const deleteProduct = async (id: number, tokenStr:string, dispatch:Dispatch, navigate: AppRouterInstance, axiosJWT: AxiosInstance) => {
     dispatch(deleteProductStart())
     try {
-      const rs = await api.delete(`${url.BASE_URL}${url.PRODUCT.DELETE}${id}`,{
+      const rs = await axiosJWT.delete(`${url.BASE_URL}${url.PRODUCT.DELETE}${id}`,{
         headers: {Authorization: `Bearer ${tokenStr}`},
     });
     if (!(rs.status === 200)) {
@@ -175,14 +174,14 @@ export const deleteProduct = async (id: number, tokenStr:string, dispatch:Dispat
     }
 };
 
-export const updateCapsule = async (dataProd:UpdateCapsule, tokenStr:string, dispatch: Dispatch) => {
+export const updateCapsule = async (dataProd:UpdateCapsule, tokenStr:string, dispatch: Dispatch, axiosJWT: AxiosInstance) => {
   dispatch(updateProductStart())
   const formData = new FormData();
   for (let key in dataProd) {
       formData.append(key, dataProd[key]);
   }
   try {
-      const rs = await api.post(`${url.BASE_URL}${url.PRODUCT.UPDATE.CAPSULE}`, formData, {
+      const rs = await axiosJWT.post(`${url.BASE_URL}${url.PRODUCT.UPDATE.CAPSULE}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data',Authorization: `Bearer ${tokenStr}`},
     });
     const data = rs.data;
@@ -190,6 +189,38 @@ export const updateCapsule = async (dataProd:UpdateCapsule, tokenStr:string, dis
   } catch (error) {
     dispatch(updateProductFailed())
   }
+};
+export const updateLiquid = async (dataProd:UpdateLiquid, tokenStr:string, dispatch: Dispatch, axiosJWT: AxiosInstance) => {
+    dispatch(updateProductStart())
+    const formData = new FormData();
+    for (let key in dataProd) {
+        formData.append(key, dataProd[key]);
+    }
+    try {
+        const rs = await axiosJWT.post(`${url.BASE_URL}${url.PRODUCT.UPDATE.LIQUID}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data',Authorization: `Bearer ${tokenStr}`},
+      });
+      const data = rs.data;
+      dispatch(updateProductSuccess(data)) 
+    } catch (error) {
+      dispatch(updateProductFailed())
+    }
+};
+export const updateTablet = async (dataProd:UpdateTablet, tokenStr:string, dispatch: Dispatch, axiosJWT: AxiosInstance) => {
+    dispatch(updateProductStart())
+    const formData = new FormData();
+    for (let key in dataProd) {
+        formData.append(key, dataProd[key]);
+    }
+    try {
+        const rs = await axiosJWT.post(`${url.BASE_URL}${url.PRODUCT.UPDATE.TABLET}`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data',Authorization: `Bearer ${tokenStr}`},
+      });
+      const data = rs.data;
+      dispatch(updateProductSuccess(data)) 
+    } catch (error) {
+      dispatch(updateProductFailed())
+    }
 };
 
 export const loadProduct = async (category:number, sort:string, page: number, dispatch:Dispatch)=>{
@@ -234,10 +265,10 @@ export const loadCategory = async (dispatch: Dispatch) => {
 }
 
 //Resume
-export const loadResume = async (dispatch: Dispatch, status: string, filter: string, tokenStr:string, page:number) => {
+export const loadResume = async (dispatch: Dispatch, status: string, filter: string, tokenStr:string, page:number,axiosJWT: AxiosInstance) => {
     dispatch(loadResumeStart())
     try{
-        const rs = await api.get(`${url.BASE_URL}${url.RESUME.LOAD.DEFAULT}${status}${url.RESUME.LOAD.FILTER}${filter}${url.RESUME.LOAD.PAGE}${page}`,{
+        const rs = await axiosJWT.get(`${url.BASE_URL}${url.RESUME.LOAD.DEFAULT}${status}${url.RESUME.LOAD.FILTER}${filter}${url.RESUME.LOAD.PAGE}${page}`,{
             headers: {Authorization : `Bearer ${tokenStr}`}
         });
         dispatch(loadResumeSuccess(rs.data.metaData));
@@ -247,9 +278,9 @@ export const loadResume = async (dispatch: Dispatch, status: string, filter: str
     }
 }
 
-export const loadPageResume = async (dispatch: Dispatch, status: string, filter: string, tokenStr:string, page:number) => {
+export const loadPageResume = async (dispatch: Dispatch, status: string, filter: string, tokenStr:string, page:number,axiosJWT: AxiosInstance) => {
     try{
-        const rs = await api.get(`${url.BASE_URL}${url.RESUME.LOAD.DEFAULT}${status}${url.RESUME.LOAD.FILTER}${filter}${url.RESUME.LOAD.PAGE}${page}`,{
+        const rs = await axiosJWT.get(`${url.BASE_URL}${url.RESUME.LOAD.DEFAULT}${status}${url.RESUME.LOAD.FILTER}${filter}${url.RESUME.LOAD.PAGE}${page}`,{
             headers: {Authorization : `Bearer ${tokenStr}`}
         });
         dispatch(loadPageResumeSuccess(rs.data.metaData));
@@ -261,10 +292,10 @@ export const loadPageResume = async (dispatch: Dispatch, status: string, filter:
 
 
 // User
-export const loadUser = async (dispatch: Dispatch, tokenStr:string, page:number) => {
+export const loadUser = async (dispatch: Dispatch, tokenStr:string, page:number,axiosJWT: AxiosInstance) => {
     dispatch(getUserStart())
     try{
-        const rs = await api.get(`${url.BASE_URL}${url.USER.LOAD}${url.USER.PAGE}${page}`,{
+        const rs = await axiosJWT.get(`${url.BASE_URL}${url.USER.LOAD}${url.USER.PAGE}${page}`,{
             headers: {Authorization : `Bearer ${tokenStr}`}
         });
         dispatch(getUserSuccess(rs.data.metaData))
@@ -273,9 +304,9 @@ export const loadUser = async (dispatch: Dispatch, tokenStr:string, page:number)
         dispatch(getUserFailed())
     }
 }
-export const loadPageUser = async (dispatch: Dispatch, tokenStr:string, page:number) => {
+export const loadPageUser = async (dispatch: Dispatch, tokenStr:string, page:number,axiosJWT: AxiosInstance) => {
     try{
-        const rs = await api.get(`${url.BASE_URL}${url.USER.LOAD}${url.USER.PAGE}${page}`,{
+        const rs = await axiosJWT.get(`${url.BASE_URL}${url.USER.LOAD}${url.USER.PAGE}${page}`,{
             headers: {Authorization : `Bearer ${tokenStr}`}
         });
         dispatch(loadPageUserSuccess(rs.data.metaData));

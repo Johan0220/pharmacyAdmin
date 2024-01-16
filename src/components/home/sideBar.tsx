@@ -23,8 +23,13 @@ const Sidebar = () => {
     }
     const handleTheme = () => setDarkMode(!darkMode)
     useEffect(()=>{
-        profileRequest(dispatch,token.accessToken,axiosJWT)
+        profileRequest(dispatch,token?.accessToken,axiosJWT)
     },[])
+    useEffect(()=>{
+        if(!token){
+            navigate.push('/login')
+        }
+    })
     useEffect(()=>{
         document.body.classList.toggle("dark", darkMode)
     },[darkMode])

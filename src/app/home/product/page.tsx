@@ -14,9 +14,10 @@ import OutsideClickHandler from "react-outside-click-handler";
 import { useAppSelector } from "@/redux/hooks";
 import api from "@/services/api";
 import url from "@/services/url";
-import { RSC_MODULE_TYPES } from "next/dist/shared/lib/constants";
 import LoadingMore from "@/components/loading/loadMore";
 import EndMessage from "@/components/loading/endMessage";
+import createAxios from "@/services/createAxios";
+import { loginSuccess } from "@/redux/features/auth/authSlice";
 const Product = () => {
     let file;
     if (typeof window !== 'undefined') {
@@ -30,10 +31,8 @@ const Product = () => {
     const isFetching :any = useAppSelector((state)=>state.product.products.isFetching);
     const tokenStr: string = token?.accessToken;
     const dispatch = useDispatch();
-    // useEffect(() => {
-        //     if(!user)
-        //     navigate.push('/login')
-        //   }, []);
+    const navigate = useRouter();
+    let axiosJWT = createAxios(token, dispatch, navigate,loginSuccess)
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [dropdownAdd, setDropdownAdd] = useState(false);
     const [addProduct,setAddProduct] = useState(false)   
@@ -148,15 +147,15 @@ const Product = () => {
 
     const handleAddCapule = (event:FormEvent) => {
         event.preventDefault();
-        addCapsule(newCapsule, dispatch, tokenStr)
+        addCapsule(newCapsule, dispatch, tokenStr, axiosJWT)
     }
     const handleAddLiquid = (event:FormEvent) => {
         event.preventDefault();
-        addLiquid(newLiquid, dispatch, tokenStr)
+        addLiquid(newLiquid, dispatch, tokenStr, axiosJWT)
     }
     const handleAddTablet = (event:FormEvent) => {
         event.preventDefault();
-        addTablet(newTablet, dispatch, tokenStr)
+        addTablet(newTablet, dispatch, tokenStr, axiosJWT)
     }
     const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
         let value = event.target.value;

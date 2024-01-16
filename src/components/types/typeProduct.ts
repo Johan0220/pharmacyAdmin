@@ -29,7 +29,7 @@ type UpdateLiquid = {
     id: number;
     productName: string;
     title: string;
-    thumbnail: File;
+    thumbnail?: File;
     airPressure: string;
     airVolume: string;
     fillingSpeed: string;
@@ -40,7 +40,7 @@ type UpdateTablet = {
     id: 12;
     productName: string;
     title: string;
-    thumbnail: File;
+    thumbnail?: File;
     modelNumber: string;
     dies: string;
     maxPressure: string

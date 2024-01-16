@@ -3,22 +3,24 @@ import Image from "next/image";
 import api from "@/services/api";
 import { loginSuccess } from "@/redux/features/auth/authSlice";
 import Link from "next/link";
-import url from "@/services/url";
 import OutsideClickHandler from "react-outside-click-handler";
 import { deleteProduct } from "@/services/apiRequest";
-import { useAppDispatch } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
+import createAxios from "@/services/createAxios";
 const ProductCapsule = (props:any) => { // properties  
     const product = props.products;
     const index = props.index;
-    const tokenStr = props.tokenStr;
+    const token: any = useAppSelector((state)=>state.auth.login.currentToken);
+    const tokenStr = token?.accessToken
     const page = props.page;
     const dispatch = useAppDispatch();
     const navigate = useRouter();
+    let axiosJWT = createAxios(token,dispatch,navigate,loginSuccess)
     const [actprod,setActprod] = useState(false)
     const [delprod,setDelprod] = useState(false)
     const handleDetele = () =>{
-        deleteProduct(product.id, tokenStr, dispatch, navigate)
+        deleteProduct(product.id, tokenStr, dispatch, navigate,axiosJWT)
     }
     return (
         <>

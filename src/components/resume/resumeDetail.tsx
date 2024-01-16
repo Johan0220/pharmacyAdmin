@@ -5,14 +5,19 @@ import url from "@/services/url";
 import {FormEvent, useEffect, useState} from "react";
 import { useRouter } from "next/navigation";
 import { ResumeHandler} from "../types/typeResume"; 
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import Loading from "../loading/loadFull";
+import createAxios from "@/services/createAxios";
+import { loginSuccess } from "@/redux/features/auth/authSlice";
 const ResumeDetail = (props: any) => {
         const resume = props.resume;
         const [isFetching, setIsFetching] = useState(false);
         const [cancel, setCancel] = useState({})
         const token = useAppSelector((state) => state.auth.login.currentToken);
+        const navigate = useRouter()
         const tokenStr = token?.accessToken
+        const dispatch = useAppDispatch();
+        let axiosJWT = createAxios(token,dispatch, navigate,loginSuccess)
         const date = new Date();
         const [body, setBody] = useState<ResumeHandler>({
                 idProfileDetail: '',
@@ -26,7 +31,6 @@ const ResumeDetail = (props: any) => {
         })
         const [cancelShow, setCancelShow] = useState(false)
         const [editprod, setEditprod] = useState(false);
-        const navigate = useRouter();
         const resumeHandler = async ( data: any ) => {
                 setIsFetching(true);
                 // const formData = new FormData();
@@ -37,7 +41,7 @@ const ResumeDetail = (props: any) => {
                 //         }
                 // });
                 try{
-                        const rs = await api.post(`${url.BASE_URL}${url.RESUME.ACCEPTORCANCEL}`, data, {
+                        const rs = await axiosJWT.post(`${url.BASE_URL}${url.RESUME.ACCEPTORCANCEL}`, data, {
                                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tokenStr}`},
                             });
                         setIsFetching(false)
@@ -74,7 +78,7 @@ const ResumeDetail = (props: any) => {
         return(
                 <>      
 
-                        <div id="acceptModal" tabIndex={-1} aria-hidden="true" style={{display:editprod? "block" : "none"}} className="hidden bg-smoke overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-100 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                        <div id="acceptModal" tabIndex={-1} aria-hidden="true" style={{display:editprod? "block" : "none"}} className="hidden h-screen bg-smoke overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-100 justify-center items-center w-full md:inset-0">
                                         <div className="start-30 relative p-4 w-full max-w-2xl max-h-full">
                                         {/* <!-- Modal content --> */}
                                         <div className="relative border-solid border-2 rounded-lg p-4 bg-white shadow dark:border-slate-600 dark:bg-gray-800 sm:p-5">

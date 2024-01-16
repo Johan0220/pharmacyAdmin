@@ -1,4 +1,19 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+
+# Installation Guide: Admin
+
+## 1. Install Node.js:
+
+- Install Node.js from https://nodejs.org/en
+- Node.js version >16 is required. (Version 20.10.0 is recommended)
+
+## 2. Run the Project
+
+- Unzip the file or clone from GitHub: `git clone https://github.com/Johan0220/pharmacyAdmin.git`
+- In the project directory, open the terminal and run the command `cd pharamceutitals` (e.g., `...>cd pharamceutitals`)
+- Then run the command `npm i` (e.g., `../pharamceutitals> npm i`)
+- After completion, run the command `npm run dev` (e.g., `../pharamceutitals> npm run dev`)
+- Log in to use: email `admin77384@gmail.com`, password: `12345678`
+
 
 ## Getting Started
 
